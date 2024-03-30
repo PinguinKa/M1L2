@@ -1,21 +1,25 @@
 import discord
-from discord.ext import commands
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='$', intents=intents)
+client = discord.Client(intents=intents)
 
-@bot.event
+@client.event
 async def on_ready():
-    print(f'We have logged in as {bot.user}')
+    print(f'We have logged in as {client.user}')
 
-@bot.command()
-async def hello(ctx):
-    await ctx.send(f'Привет! Я бот {bot.user}!')
-
-@bot.command()
-async def heh(ctx, count_heh = 5):
-    await ctx.send("he" * count_heh)
-
-bot.run("")
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    if message.content.startswith('$hello'):
+        await message.channel.send(f'Привет! Я бот {client.user}!')
+    elif  message.content.startswith('$heh'):
+        if len(message.content) > 4:
+            count_heh = int(message.content[4:])
+        else:
+            count_heh = 5
+        await message.channel.send("he" * count_heh)
+        
+client.run("ТУТ СЕКРЕТНЫЙ ТОКЕН")
