@@ -1,27 +1,17 @@
-import discord
-from discord.ext import commands
+import telebot
+    # Инициализация бота с использованием его токена
+bot = telebot.TeleBot("ТУТ СЕКРЕТНЫЙ ТОКЕН")
 
-intents = discord.Intents.default()
-intents.message_content = True
+# Обработчик команды '/start' и '/hello'
+@bot.message_handler(commands=['start', 'hello'])
+def send_welcome(message):
+    bot.reply_to(message, f'Привет! Я бот {bot.get_me().first_name}!')
 
-bot = commands.Bot(command_prefix='$', intents=intents)
+# Обработчик команды '/heh'
+@bot.message_handler(commands=['heh'])
+def send_heh(message):
+    count_heh = int(message.text.split()[1]) if len(message.text.split()) > 1 else 5
+    bot.reply_to(message, "he" * count_heh)
 
-@bot.event
-async def on_ready():
-    print(f'We have logged in as {bot.user}')
-
-@bot.command()
-async def hello(ctx):
-    await ctx.send(f'Привет! Я бот {bot.user}!')
-
-@bot.command()
-async def heh(ctx, count_heh = 5):
-    await ctx.send("he" * count_heh)
-
-@bot.command()
-async def add(ctx, left: int, right: int):
-    """Adds two numbers together."""
-    await ctx.send(left + right)
-
-
-bot.run("")
+# Запуск бота
+bot.polling()
